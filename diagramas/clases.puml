@@ -1,0 +1,103 @@
+@startuml
+' Diagrama de clases - Botica San Felipe (Tema 3: PlantUML)
+skinparam classAttributeIconSize 0
+
+abstract class Persona {
+  -nombre : String
+  -dniEncriptado : String
+  -dniEnmascarado : String
+  +coincideConDni(dni : String) : boolean
+  -telefono : String
+  +getRol() : String
+}
+class Cliente {
+  -direccion : String
+  -historial : ArrayList<Dispensacion>
+  +getRol() : String
+}
+abstract class PersonalFarmacia {
+  -codigoEmpleado : String
+  +puedeDispensarConReceta() : boolean
+}
+class QuimicoFarmaceutico {
+  -numeroColegiatura : String
+}
+class Vendedor
+class Medicamento {
+  -codigo : String
+  -nombreComercial : String
+  -precioUnitario : double
+  -stock : int
+  -anioVencimiento : int
+  -requiereReceta : boolean
+  +reducirStock(cantidad : int)
+  +estaVencido() : boolean
+}
+class Dispensacion {
+  -estado : String
+  +agregarItem(m : Medicamento, cantidad : int)
+  +confirmar()
+  +cancelar()
+  +calcularTotal() : double
+}
+class DetalleDispensacion {
+  -cantidad : int
+  +getSubtotal() : double
+}
+class GestorBotica <<Singleton>> {
+  -instancia : GestorBotica
+  +getInstancia() : GestorBotica
+}
+class FabricaPersonas <<Factory>> {
+  +crearPersona(tipo, nombre, dni, telefono, extra) : Persona
+}
+class ReporteService {
+  +medicamentosConStockBajo(...)
+  +totalRecaudado(...)
+  +generarInventario(...)
+}
+
+Persona <|-- Cliente
+Persona <|-- PersonalFarmacia
+PersonalFarmacia <|-- QuimicoFarmaceutico
+PersonalFarmacia <|-- Vendedor
+
+Cliente "1" -- "0..*" Dispensacion : historial
+Dispensacion --> "1" PersonalFarmacia : atendidoPor
+Dispensacion *-- "1..*" DetalleDispensacion : composición
+DetalleDispensacion --> Medicamento
+
+GestorBotica o-- Medicamento : agregación
+GestorBotica o-- Cliente
+GestorBotica o-- PersonalFarmacia
+GestorBotica o-- Dispensacion
+
+FabricaPersonas ..> Persona : crea
+ReporteService ..> Medicamento
+ReporteService ..> Dispensacion
+
+' ---- Sistema de seguridad ----
+class Usuario {
+  -usuario : String
+  -contrasena : String
+}
+class Encriptador {
+  +encriptarSHA256(texto : String) : String
+}
+class GestionSeguridad {
+  +autenticar(usuario, password) : boolean
+}
+class ControladorVentana <<JFrame>> {
+  +cambiarPanel(panel : JPanel)
+}
+class IngresoSistema <<JPanel>>
+class PanelPrincipal <<JPanel>>
+
+GestionSeguridad *-- "1" Usuario
+GestionSeguridad ..> Encriptador
+IngresoSistema ..> GestionSeguridad
+ControladorVentana --> IngresoSistema : muestra primero
+ControladorVentana --> PanelPrincipal : si el login es correcto
+PanelPrincipal ..> GestorBotica
+PanelPrincipal ..> ReporteService
+@enduml

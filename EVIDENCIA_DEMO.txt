@@ -1,0 +1,17 @@
+Químico Farmacéutico: Ana Rojas Vega (QF-1)
+Vendedor: Luis Paredes (VD-2)
+Cliente: Marco Salinas
+Venta 1 confirmada. Total: S/ 3.00
+-- Fin del intento de venta 1 --
+Excepción esperada capturada: Solo un Químico Farmacéutico puede dispensar Amoxicilina 500mg
+-- Fin del intento de venta 2 --
+Venta 3 confirmada. Total: S/ 8.00
+-- Fin del intento de venta 3 --
+
+=== Reporte Botica San Felipe ===
+Medicamentos con stock bajo (<10): 1
+  - Paracetamol 500mg (MED-001) - stock: 6
+Medicamentos vencidos: 1
+  - Jarabe Tos Seca
+Total recaudado: S/ 11.00
+

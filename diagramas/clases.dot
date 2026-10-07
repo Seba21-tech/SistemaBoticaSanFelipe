@@ -1,0 +1,44 @@
+digraph G {
+  rankdir=BT; fontname="Helvetica"; node [shape=record, fontname="Helvetica", fontsize=10, style=filled, fillcolor="#FFFFFF"]; edge [fontname="Helvetica", fontsize=9];
+  Persona [label="{«abstract»\nPersona|- nombre : String\l- dniEncriptado : String\l- dniEnmascarado : String\l- telefono : String\l|+ getRol() : String\l}", fillcolor="#EEF3FB"];
+  Cliente [label="{Cliente|- direccion : String\l- historial : ArrayList\<Dispensacion\>\l|+ getRol() : String\l}"];
+  PersonalFarmacia [label="{«abstract»\nPersonalFarmacia|- codigoEmpleado : String\l|+ puedeDispensarConReceta() : boolean\l}", fillcolor="#EEF3FB"];
+  Quimico [label="{QuimicoFarmaceutico|- numeroColegiatura : String\l|+ puedeDispensarConReceta() : boolean\l}"];
+  Vendedor [label="{Vendedor|+ puedeDispensarConReceta() : boolean\l}"];
+  Medicamento [label="{Medicamento|- codigo : String\l- nombreComercial : String\l- precioUnitario : double\l- stock : int\l- anioVencimiento : int\l- requiereReceta : boolean\l|+ reducirStock(int)\l+ estaVencido() : boolean\l}"];
+  Dispensacion [label="{Dispensacion|- estado : String\l|+ agregarItem(Medicamento, int)\l+ confirmar()\l+ cancelar()\l+ calcularTotal() : double\l}"];
+  Detalle [label="{DetalleDispensacion|- cantidad : int\l|+ getSubtotal() : double\l}"];
+  Gestor [label="{«Singleton»\nGestorBotica|- instancia : GestorBotica\l|+ getInstancia() : GestorBotica\l}", fillcolor="#FFF6E0"];
+  Fabrica [label="{«Factory»\nFabricaPersonas||+ crearPersona(...) : Persona\l}", fillcolor="#FFF6E0"];
+  Reporte [label="{ReporteService||+ generarInventario(...)\l+ medicamentosConStockBajo(...)\l+ totalRecaudado(...)\l}"];
+
+  Cliente -> Persona [arrowhead=empty];
+  PersonalFarmacia -> Persona [arrowhead=empty];
+  Quimico -> PersonalFarmacia [arrowhead=empty];
+  Vendedor -> PersonalFarmacia [arrowhead=empty];
+  Cliente -> Dispensacion [label="historial", taillabel="1", headlabel="0..*", arrowhead=vee];
+  Dispensacion -> PersonalFarmacia [label="atendidoPor", taillabel="0..*", headlabel="1", arrowhead=vee];
+  Dispensacion -> Detalle [label="composición", taillabel="1", headlabel="1..*", dir=both, arrowtail=diamond, arrowhead=none];
+  Detalle -> Medicamento [taillabel="0..*", headlabel="1", arrowhead=vee];
+  Gestor -> Medicamento [label="agregación", taillabel="1", headlabel="0..*", dir=both, arrowtail=odiamond, arrowhead=none];
+  Gestor -> Cliente [taillabel="1", headlabel="0..*", dir=both, arrowtail=odiamond, arrowhead=none];
+  Gestor -> PersonalFarmacia [taillabel="1", headlabel="0..*", dir=both, arrowtail=odiamond, arrowhead=none];
+  Gestor -> Dispensacion [taillabel="1", headlabel="0..*", dir=both, arrowtail=odiamond, arrowhead=none];
+  Fabrica -> Persona [label="crea", style=dashed, arrowhead=vee];
+  Reporte -> Medicamento [style=dashed, arrowhead=vee];
+  Reporte -> Dispensacion [style=dashed, arrowhead=vee];
+
+  Usuario [label="{Usuario|- usuario : String\l- contrasena : String (hash)\l}", fillcolor="#FDECEC"];
+  Encriptador [label="{Encriptador||+ encriptarSHA256(String) : String\l}", fillcolor="#FDECEC"];
+  Seguridad [label="{GestionSeguridad||+ autenticar(String, String) : boolean\l}", fillcolor="#FDECEC"];
+  Controlador [label="{ControladorVentana\n«JFrame»||+ cambiarPanel(JPanel)\l}", fillcolor="#E8F5E9"];
+  Ingreso [label="{IngresoSistema\n«JPanel»}", fillcolor="#E8F5E9"];
+  PanelP [label="{PanelPrincipal\n«JPanel»}", fillcolor="#E8F5E9"];
+  Seguridad -> Usuario [dir=both, arrowtail=diamond, arrowhead=none];
+  Seguridad -> Encriptador [style=dashed, arrowhead=vee];
+  Ingreso -> Seguridad [style=dashed, arrowhead=vee];
+  Controlador -> Ingreso [label="muestra primero", arrowhead=vee];
+  Controlador -> PanelP [label="si el login es correcto", arrowhead=vee];
+  PanelP -> Gestor [style=dashed, arrowhead=vee];
+  PanelP -> Reporte [style=dashed, arrowhead=vee];
+}
